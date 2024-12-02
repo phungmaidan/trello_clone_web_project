@@ -38,7 +38,7 @@ function Starred() {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-menu-starred'
+          'aria-labelledby': 'basic-button-starred'
         }}
       >
         <MenuItem>

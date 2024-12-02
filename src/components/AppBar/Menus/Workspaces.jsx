@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
@@ -41,7 +42,7 @@ function Workspaces() {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-menu-workspaces'
+          'aria-labelledby': 'basic-button-workspaces'
         }}
       >
         <MenuItem>
