@@ -34,7 +34,7 @@ function Profiles() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            sx={{ width: 30, height: 30 }}
+            sx={{ width: 34, height: 34 }}
             alt="My-Avartar"
             src="https://yt3.ggpht.com/ytc/AIf8zZQw4Qsz9usQG1p4cAIEdnJnPb0w0PXXMt-IlfjQCS-DOxIAuWFs1CeSeJ29mAET=s88-c-k-c0x00ffffff-no-rj"
           />
