@@ -9,7 +9,6 @@ import CommentIcon from '@mui/icons-material/Comment'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { bgcolor } from '@mui/system'
 
 function Card({ card }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -22,7 +21,8 @@ function Card({ card }) {
     transform: CSS.Translate.toString(transform),
     transition,
     height: '100%',
-    opacity: isDragging ? 0.5 : undefined
+    opacity: isDragging ? 0.5 : undefined,
+    border: isDragging ? '2px solid #2ecc71' : undefined
   }
   const shouldShowCardActions = () => {
     return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
