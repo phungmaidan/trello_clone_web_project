@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
+import { Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
@@ -8,10 +8,10 @@ import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 
-function TrelloCard({ temporaryHideMedia }) {
+function Card({ temporaryHideMedia }) {
   if (temporaryHideMedia) {
     return (
-      <Card sx={{
+      <MuiCard sx={{
         cursor: 'pointer',
         boxShadow: '0 1px 1px rgba(0, 0, 0, 0.2)',
         overflow: 'unset'
@@ -19,11 +19,11 @@ function TrelloCard({ temporaryHideMedia }) {
         <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
           <Typography>Cards Test 01</Typography>
         </CardContent>
-      </Card>
+      </MuiCard>
     )
   }
   return (
-    <Card sx={{
+    <MuiCard sx={{
       cursor: 'pointer',
       boxShadow: '0 1px 1px rgba(0, 0, 0, 0.2)',
       overflow: 'unset'
@@ -41,8 +41,8 @@ function TrelloCard({ temporaryHideMedia }) {
         <Button size="small" startIcon={<CommentIcon />}>15</Button>
         <Button size="small" startIcon={<AttachFileIcon />}>10</Button>
       </CardActions>
-    </Card>
+    </MuiCard>
   )
 }
 
-export default TrelloCard
+export default Card

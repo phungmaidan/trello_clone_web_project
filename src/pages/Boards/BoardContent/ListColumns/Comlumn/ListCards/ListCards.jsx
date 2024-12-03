@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import TrelloCard from './Card/Card'
+import Card from './Card/Card'
 
 function ListCards() {
   return (
@@ -20,8 +20,18 @@ function ListCards() {
       '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da' },
       '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#bfc2cf' }
     }}>
-      <TrelloCard />
-      <TrelloCard temporaryHideMedia = 'true'/>
+      <Card />
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
+      <Card temporaryHideMedia/>
     </Box>
   )
 }
