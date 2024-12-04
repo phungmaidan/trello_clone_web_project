@@ -18,7 +18,7 @@ const MENU_STYLE = {
   border: 'none',
   paddingX: '5px',
   borderRadius: '4px',
-  '.MuiSvgIcon-root' : {
+  '.MuiSvgIcon-root': {
     color: 'white'
   },
   '&:hover': {
@@ -26,7 +26,7 @@ const MENU_STYLE = {
   }
 }
 
-function BoardBar({board}) {
+function BoardBar({ board }) {
   return (
     <Box
       sx={{
@@ -79,16 +79,16 @@ function BoardBar({board}) {
           variant="outlined"
           startIcon={<PersonAddIcon />}
           sx={{
-            color:'white',
-            borderColor:'white',
-            '&:hover': { borderColor:'white' }
+            color: 'white',
+            borderColor: 'white',
+            '&:hover': { borderColor: 'white' }
           }}
         > Invite
         </Button>
         <AvatarGroup
           max={3}
           sx={{
-            gap:'10px',
+            gap: '10px',
             '& .MuiAvatar-root': {
               width: 34,
               height: 34,

@@ -32,7 +32,7 @@ const theme = extendTheme({
   components: {
     // Name of the component
     MuiCssBaseline: {
-      styleOverrides:{
+      styleOverrides: {
         body: {
           '*::-webkit-scrollbar': {
             width: '8px',
@@ -52,9 +52,9 @@ const theme = extendTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform:'none',
-          borderWidth:'0.5px',
-          '&:hover': { borderWidth:'0.5px' }
+          textTransform: 'none',
+          borderWidth: '0.5px',
+          '&:hover': { borderWidth: '0.5px' }
         }
       }
     },
