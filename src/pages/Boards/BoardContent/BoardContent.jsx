@@ -22,7 +22,8 @@ import { arrayMove } from '@dnd-kit/sortable'
 
 import Column from './ListColumns/Comlumn/Column'
 import Card from './ListColumns/Comlumn/ListCards/Card/Card'
-import { cloneDeep, over } from 'lodash'
+import { cloneDeep, isEmpty, over } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatter'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -98,12 +99,17 @@ function BoardContent({ board }) {
       const nextActiveColumn = nextColumns.find(column => column._id === activeColumn._id)
       const nextOverColumn = nextColumns.find(column => column._id === overColumn._id)
 
-      // Column cũ
+      // nextActiveColumn: Column cũ
       if (nextActiveColumn) {
         // Xoá card ở column active (column cũ,
         //trạng thái column khi kéo card ra khỏi nó
         //để sang column khác)
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+
+        // Thêm Placeholder Card nếu Column rỗng
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
 
         //Cập nhật lại mảng cardOrderIds cho chuẩn dữ liệu
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
@@ -127,6 +133,9 @@ function BoardContent({ board }) {
           0,
           rebuild_activeDraggingCardData
         )
+
+        // Xoá Placeholder Card di nếu đang tồn tại
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
 
         //Cập nhật lại mảng nextOverColumn cho chuẩn dữ liệu
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
@@ -298,7 +307,7 @@ function BoardContent({ board }) {
   const collisionDetectionStrategy = useCallback((args) => {
     // Trường hợp kéo column thì dùng thuật toán clossetCorners
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
-      return closestCorners({ args })
+      return closestCorners({ ...args })
     }
 
     // Tìm các điểm giao nhau, va chạm, trả về một mảng các va chạm - intersections với con trỏ
