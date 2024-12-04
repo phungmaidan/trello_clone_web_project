@@ -22,5 +22,5 @@ export const mapOrder = (originalArray, orderArray, key) => {
   //     return orderArray.indexOf(a[key]) - orderArray.indexOf(b[key])
   //   })
 
-//   return orderedArray
+  //   return orderedArray
 }

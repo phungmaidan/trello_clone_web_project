@@ -24,7 +24,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
 function AppBar() {
-  const [searchValue,setSearchValue] = useState('')
+  const [searchValue, setSearchValue] = useState('')
   return (
     <Box
       sx={{
@@ -42,17 +42,19 @@ function AppBar() {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <AppIcon sx={{ color: 'white' }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <SvgIcon component={TrelloIcon} fontSize="small" inheritViewBox sx={{ color:
-'white'
+          <SvgIcon component={TrelloIcon} fontSize="small" inheritViewBox sx={{
+            color:
+              'white'
           }} />
-          <Typography variant="span" sx={{ fontSize: '1.2rem', fontWeight: 'bold', color:
-'white'
+          <Typography variant="span" sx={{
+            fontSize: '1.2rem', fontWeight: 'bold', color:
+              'white'
           }}>
             Trello
           </Typography>
         </Box>
 
-        <Box sx= {{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
           <Workspaces />
           <Recent />
           <Starred />
@@ -80,7 +82,7 @@ function AppBar() {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color:'white' }}/>
+                <SearchIcon sx={{ color: 'white' }} />
               </InputAdornment>
             ),
             endAdornment: (
@@ -92,10 +94,10 @@ function AppBar() {
             )
           }}
           sx={{
-            minWidth:'120px',
-            maxWidth:'180px',
-            '& label': { color:'white' },
-            '& input': { color:'white' },
+            minWidth: '120px',
+            maxWidth: '180px',
+            '& label': { color: 'white' },
+            '& input': { color: 'white' },
             '& label.Mui-focused': { color: 'white' },
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: 'white' },
@@ -109,12 +111,12 @@ function AppBar() {
 
         <Tooltip title="Notifications">
           <Badge color="warning" variant="dot" sx={{ cursor: 'pointer' }}>
-            <NotificationsNoneIcon sx={{ color:'white' }} />
+            <NotificationsNoneIcon sx={{ color: 'white' }} />
           </Badge>
         </Tooltip>
 
         <Tooltip title="Help">
-          <HelpOutlineIcon sx={{ color:'white', cursor: 'pointer' }}/>
+          <HelpOutlineIcon sx={{ color: 'white', cursor: 'pointer' }} />
         </Tooltip>
 
         <Profiles />
