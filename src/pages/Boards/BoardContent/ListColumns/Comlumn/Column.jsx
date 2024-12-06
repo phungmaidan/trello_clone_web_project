@@ -47,7 +47,6 @@ function Column({ column }) {
   const handleClose = () => setAnchorEl(null)
 
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
-
   // Phải bọc div ở đây vì vấn đề chiều cao của column
   // khi kéo thả sẽ có bug dạng flickering
   return (
