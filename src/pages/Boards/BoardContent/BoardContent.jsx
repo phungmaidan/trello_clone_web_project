@@ -35,7 +35,9 @@ function BoardContent({
   createNewColumn,
   createNewCard,
   moveColumns,
-  moveCardInTheSameColumn }) {
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn
+}) {
   // Nếu dùng pointerSensor mặc định thì phải kết hợp thuộc tính CSS touch-action: none
   //ở những phần tử kéo nhưng vẫn bug
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
@@ -82,7 +84,8 @@ function BoardContent({
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns(prevColumns => {
       // Tìm vị trí (index) của overCard trong column
@@ -146,6 +149,22 @@ function BoardContent({
         //Cập nhật lại mảng nextOverColumn cho chuẩn dữ liệu
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
+
+      // Nếu function này được gọi từ handleDragEnd nghĩa là đã kéo thả xong, lúc này mới xử lý gọi API 1 lần ở đây
+      if (triggerFrom === 'handleDragEnd') {
+        /**
+         * Gọi lên props function moveCardToDifferentColumn nằm ở component cha cao nhất (boards/_id,jsx)
+         * Lúc này có thể gọi API ở đây là xong thay vì phải lần lượt gọi ngược lên những component cha phía bên trên
+         */
+        // Phải dùng tới activeDragItemData.columnId hoặc tốt nhất là oldColumnWhenDraggingCard._id (set vào state từ bước handleDragStart) chứ không phải activeData trong scope handleDragEnd này vì sau khi qua onDragOver và tới đây là state của card đã bị cập nhật 1 lần rồi.
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
+      }
+
       return nextColumns
     })
   }
@@ -204,7 +223,8 @@ function BoardContent({
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
   }
@@ -243,7 +263,8 @@ function BoardContent({
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         // Hành động kéo - thả Card trong cùng một column
