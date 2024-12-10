@@ -11,6 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import {
   createNewCardAPI,
   createNewColumnAPI,
+  deleteColumnDetailsAPI,
   fetchBoardDetailsAPI,
   moveCardToDifferentColumnAPI,
   updateBoardDetailsAPI,
@@ -71,8 +72,15 @@ function Board() {
     const newBoard = { ...board }
     const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
     if (columnToUpdate) {
-      columnToUpdate.cards.push(createdCard)
-      columnToUpdate.cardOrderIds.push(createdCard._id)
+      // Nếu column rỗng: Bản chất là đang chứa một cái Placeholder card
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+      } else {
+        // Ngược lại Column đã có data thì push vào cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+
+      }
     }
     setBoard(newBoard)
   }
@@ -152,17 +160,30 @@ function Board() {
       </Box>)
   }
 
+  // Xử lý xoá một Column và Cards bên trong nó
+  const deleteColumnDetails = (columnId) => {
+    console.log("🚀 ~ deleteColumnDetails ~ columnId:", columnId)
+    // Update cho chuẩn dữ liệu state Board
+
+    // Gọi API xử lý phía Backend
+    deleteColumnDetailsAPI(columnId).then(res => {
+      console.log("🚀 ~ deleteColumnDetailsAPI ~ res:", res)
+    })
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
       <BoardBar board={board} />
       <BoardContent
         board={board}
+
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   )
