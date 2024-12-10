@@ -18,6 +18,7 @@ import {
   updateColumnDetailsAPI } from '~/apis'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatter'
+import { toast } from 'react-toastify'
 
 function Board() {
   const [board, setBoard] = useState(null)
@@ -45,8 +46,8 @@ function Board() {
   }, [])
 
   // Func này có nhiệm vụ gọi API tạo mới Column và làm lại dữ liệu State Board
-  const createNewColumn = (newColumnData) => {
-    const createdColumn = createNewColumnAPI({
+  const createNewColumn = async (newColumnData) => {
+    const createdColumn = await createNewColumnAPI({
       ...newColumnData,
       boardId: board._id
     })
@@ -60,6 +61,7 @@ function Board() {
     newBoard.columnOrderIds.push(createdColumn._id)
     setBoard(newBoard)
   }
+
 
   // Func này có nhiệm vụ gọi API tạo mới Card và làm lại dữ liệu State Board
   const createNewCard = async (newCardData) => {
@@ -162,12 +164,14 @@ function Board() {
 
   // Xử lý xoá một Column và Cards bên trong nó
   const deleteColumnDetails = (columnId) => {
-    console.log("🚀 ~ deleteColumnDetails ~ columnId:", columnId)
     // Update cho chuẩn dữ liệu state Board
-
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
+    setBoard(newBoard)
     // Gọi API xử lý phía Backend
     deleteColumnDetailsAPI(columnId).then(res => {
-      console.log("🚀 ~ deleteColumnDetailsAPI ~ res:", res)
+      toast.success(res?.deleteResult)
     })
   }
 
