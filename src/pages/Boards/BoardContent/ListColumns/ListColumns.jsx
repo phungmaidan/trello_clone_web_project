@@ -5,16 +5,26 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import TextField from '@mui/material/TextField'
-import theme from '~/theme'
 import { toast } from 'react-toastify'
+import { generatePlaceholderCard } from '~/utils/formatter'
+import { createNewColumnAPI } from '~/apis'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
+function ListColumns({ columns, deleteColumnDetails }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('Please Enter Column Title!')
       toggleOpenNewColumnForm()
@@ -26,7 +36,34 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
       title: newColumnTitle
     }
 
-    createNewColumn(newColumnData)
+    // Gọi API tạo mới Column và làm lại dữ liệu State Board
+    const createdColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id
+    })
+
+    createdColumn.cards = [generatePlaceholderCard(createdColumn)]
+    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id]
+
+    // Cập nhật state board
+
+    /**
+     * Đoạn này sẽ dính lỗi object is not extensible vì dù đã coppy/clone ra giá trị newBoard nhưng bản chất của spread operator là Shallow Copy/Clone, nên dính phải rules Immutability trong Redux Toolkit không dùng được hàm PUSH (sửa giá trị mảng trực tiếp), cách đơn giản nhanh gọn nhất ở trường hợp này là dùng tới Deep Copy/Clone toàn bộ cái Board cho dễ hiểu và code ngắn gọn
+     */
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    newBoard.columns.push(createdColumn)
+    newBoard.columnOrderIds.push(createdColumn._id)
+
+    /**
+     * Cách khác: Có thể dùng array.concat thay cho push như docs của Redux Toolkit ở trên vì push sẽ thay đổi giá trị mảng trực tiếp, còn concat thì sẽ merge - ghép mảng lại và tạo ra một mảng mới để có thể gán lại giá trị
+          const newBoard = {...board}
+          newBoard.columns = newBoard.columns.concat([createdColumn])
+          newBoard.columnOderIds = newBoard.columnOrderIds.concat([createdColumn._id])
+     */
+
+    // Cập nhật dữ liệu Board vào trong Redux Store
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     // Đóng trạng thái thêm Column mới và clean input
     toggleOpenNewColumnForm()
@@ -48,12 +85,12 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column => <Column
-          key={column._id}
-          column={column}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
-        />)}
+        {columns?.map(column =>
+          <Column
+            key={column._id}
+            column={column}
+            deleteColumnDetails={deleteColumnDetails}
+          />)}
 
         {/* Box Add new column */}
         {!openNewColumnForm

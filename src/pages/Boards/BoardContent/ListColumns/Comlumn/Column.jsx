@@ -24,13 +24,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
+function Column({ column, deleteColumnDetails }) {
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
 
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Please Enter Card Title!', { position: 'bottom-right' })
       toggleOpenNewCardForm()
@@ -42,9 +42,31 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       title: newCardTitle,
       columnId: column._id
     }
-    // Gọi API
-    createNewCard(newCardData)
 
+    // Gọi API tạo mới Card và làm lại dữ liệu State Board
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+
+    // Cập nhật state board
+    // Tương tự hàm createNewColumn nên chỗ này dùng cloneDeep
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      // Nếu column rỗng: Bản chất là đang chứa một cái Placeholder card
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+      } else {
+        // Ngược lại Column đã có data thì push vào cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+
+      }
+    }
+    // setBoard(newBoard)
+    dispatch(updateCurrentActiveBoard(newBoard))
     // Đóng trạng thái thêm Card mới và clean input
     toggleOpenNewCardForm()
     setNewCardTitle('')
