@@ -44,8 +44,8 @@ function Board() {
   }, [])
 
   // Func này có nhiệm vụ gọi API tạo mới Column và làm lại dữ liệu State Board
-  const createNewColumn = (newColumnData) => {
-    const createdColumn = createNewColumnAPI({
+  const createNewColumn = async (newColumnData) => {
+    const createdColumn = await createNewColumnAPI({
       ...newColumnData,
       boardId: board._id
     })
