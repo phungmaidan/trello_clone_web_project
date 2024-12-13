@@ -6,16 +6,12 @@ import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 //import { mockData } from '~/apis/mock-data'
 import { useEffect } from 'react'
-//import { mapOrder } from '~/utils/sorts'
 import CircularProgress from '@mui/material/CircularProgress'
 import {
-  createNewCardAPI,
-  deleteColumnDetailsAPI,
   moveCardToDifferentColumnAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI } from '~/apis'
 import { cloneDeep } from 'lodash'
-import { toast } from 'react-toastify'
 import {
   fetchBoardDetailsAPI,
   updateCurrentActiveBoard,
@@ -123,23 +119,6 @@ function Board() {
       </Box>)
   }
 
-  // Xử lý xoá một Column và Cards bên trong nó
-  const deleteColumnDetails = (columnId) => {
-    // Update cho chuẩn dữ liệu state Board
-
-    //Tương tự đoạn xử lý hàm moveColumns nên không ảnh hưởng Redux Toolkit Immutability
-    const newBoard = { ...board }
-    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
-    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
-    // setBoard(newBoard)
-    dispatch(updateCurrentActiveBoard(newBoard))
-
-    // Gọi API xử lý phía Backend
-    deleteColumnDetailsAPI(columnId).then(res => {
-      toast.success(res?.deleteResult)
-    })
-  }
-
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar />
@@ -147,8 +126,7 @@ function Board() {
       <BoardContent
         board={board}
 
-        deleteColumnDetails={deleteColumnDetails}
-
+        // 3 trường hợp move giữ nguyên để code xử lý kéo thả ở phần BoardContent không bị quá dài mất kiểm soát khi đọc code, maintain.
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}

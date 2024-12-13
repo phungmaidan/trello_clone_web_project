@@ -34,8 +34,7 @@ function BoardContent({
   board,
   moveColumns,
   moveCardInTheSameColumn,
-  moveCardToDifferentColumn,
-  deleteColumnDetails
+  moveCardToDifferentColumn
 }) {
   // Nếu dùng pointerSensor mặc định thì phải kết hợp thuộc tính CSS touch-action: none
   //ở những phần tử kéo nhưng vẫn bug
@@ -410,10 +409,7 @@ function BoardContent({
         height: (theme) => theme.trello.boardContentHeight,
         p: '10px 0'
       }}>
-        <ListColumns
-          columns={orderedColumns}
-          deleteColumnDetails={deleteColumnDetails}
-        />
+        <ListColumns columns={orderedColumns} />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemData && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && <Column column={activeDragItemData} />)}

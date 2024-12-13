@@ -23,8 +23,18 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-function Column({ column, deleteColumnDetails }) {
+function Column({ column }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
@@ -82,12 +92,19 @@ function Column({ column, deleteColumnDetails }) {
       confirmationText: 'Confirm',
       cancellationText: 'Cancel'
     }).then(() => {
-      /**
-        * Gọi lên props function deleteColumnDetails nằm ở component cha cao nhất (boards/_id.jsx)
-        * Lưu ý: Lúc này có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những component cha phía bên trên.
-        * - Với việc sử dụng Redux như vậy thì code sẽ clean chuẩn chỉnh hơn rất nhiều
-      */
-      deleteColumnDetails(column._id)
+      // Update cho chuẩn dữ liệu state Board
+
+      //Tương tự đoạn xử lý hàm moveColumns nên không ảnh hưởng Redux Toolkit Immutability
+      const newBoard = { ...board }
+      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+      // setBoard(newBoard)
+      dispatch(updateCurrentActiveBoard(newBoard))
+
+      // Gọi API xử lý phía Backend
+      deleteColumnDetailsAPI(column._id).then(res => {
+        toast.success(res?.deleteResult)
+      })
     }).catch(() => {})
   }
 

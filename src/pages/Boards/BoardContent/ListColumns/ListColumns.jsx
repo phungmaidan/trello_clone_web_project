@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
 
-function ListColumns({ columns, deleteColumnDetails }) {
+function ListColumns({ columns }) {
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
 
@@ -85,13 +85,7 @@ function ListColumns({ columns, deleteColumnDetails }) {
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column =>
-          <Column
-            key={column._id}
-            column={column}
-            deleteColumnDetails={deleteColumnDetails}
-          />)}
-
+        {columns?.map(column => <Column key={column._id} column={column} />)}
         {/* Box Add new column */}
         {!openNewColumnForm
           ? <Box onClick={toggleOpenNewColumnForm} sx={{
