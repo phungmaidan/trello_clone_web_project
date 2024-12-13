@@ -23,14 +23,24 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
+function Column({ column }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
 
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Please Enter Card Title!', { position: 'bottom-right' })
       toggleOpenNewCardForm()
@@ -42,9 +52,31 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       title: newCardTitle,
       columnId: column._id
     }
-    // Gọi API
-    createNewCard(newCardData)
 
+    // Gọi API tạo mới Card và làm lại dữ liệu State Board
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+
+    // Cập nhật state board
+    // Tương tự hàm createNewColumn nên chỗ này dùng cloneDeep
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      // Nếu column rỗng: Bản chất là đang chứa một cái Placeholder card
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+      } else {
+        // Ngược lại Column đã có data thì push vào cuối mảng
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+
+      }
+    }
+    // setBoard(newBoard)
+    dispatch(updateCurrentActiveBoard(newBoard))
     // Đóng trạng thái thêm Card mới và clean input
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -60,12 +92,19 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       confirmationText: 'Confirm',
       cancellationText: 'Cancel'
     }).then(() => {
-      /**
-        * Gọi lên props function deleteColumnDetails nằm ở component cha cao nhất (boards/_id.jsx)
-        * Lưu ý: Lúc này có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những component cha phía bên trên.
-        * - Với việc sử dụng Redux như vậy thì code sẽ clean chuẩn chỉnh hơn rất nhiều
-      */
-      deleteColumnDetails(column._id)
+      // Update cho chuẩn dữ liệu state Board
+
+      //Tương tự đoạn xử lý hàm moveColumns nên không ảnh hưởng Redux Toolkit Immutability
+      const newBoard = { ...board }
+      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+      // setBoard(newBoard)
+      dispatch(updateCurrentActiveBoard(newBoard))
+
+      // Gọi API xử lý phía Backend
+      deleteColumnDetailsAPI(column._id).then(res => {
+        toast.success(res?.deleteResult)
+      })
     }).catch(() => {})
   }
 
