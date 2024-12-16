@@ -1,17 +1,23 @@
 // Board details
+// MUI Material
 import { Box, Typography } from '@mui/material'
 import Container from '@mui/material/Container'
+import CircularProgress from '@mui/material/CircularProgress'
+
+//Component
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
+
+// Handle Data/API
 //import { mockData } from '~/apis/mock-data'
 import { useEffect } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
 import {
   moveCardToDifferentColumnAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI } from '~/apis'
-import { cloneDeep } from 'lodash'
+
+// Redux
 import {
   fetchBoardDetailsAPI,
   updateCurrentActiveBoard,
@@ -19,19 +25,28 @@ import {
 } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 
+
+// utils
+import { cloneDeep } from 'lodash'
+
+// React Router Dom
+import { useParams } from 'react-router-dom'
+
 function Board() {
   const dispatch = useDispatch()
   // Không dùng State của component, chuyển sang dùng State của Redux
   // const [board, setBoard] = useState(null)
   const board = useSelector(selectCurrentActiveBoard)
 
+  const { boardId } = useParams()
+
   useEffect(() => {
     // Tạm thời fix cứng boardId, flow chuẩn chỉnh về sau sẽ sử dụng là dùng react-router-dom để lấy chuẩn boardId từ URL về.
-    const boardId = '675254ce1ed56e16c1eefb97'
+    // const boardId = '675254ce1ed56e16c1eefb97'
     // Call API
     dispatch(fetchBoardDetailsAPI(boardId))
 
-  }, [dispatch])
+  }, [dispatch, boardId])
 
   // Func này có nhiệm vụ gọi API và xử lý khi kéo thả Column
   // Chỉ cần gọi API để cập nhật mảng columnOrderIds của Board chứa nó (thay đổi vĩ trí trong mảng)
