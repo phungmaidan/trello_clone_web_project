@@ -29,7 +29,7 @@ function RegisterForm() {
     const { email, password } = data
     toast.promise(
       registerUserAPI({ email, password }),
-      { pending: 'Registration is in progress...'}
+      { pending: 'Registration is in progress...' }
     ).then(user => {
       navigate(`/login?registeredEmail=${user.email}`)
     })
