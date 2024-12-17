@@ -1,8 +1,6 @@
 // Board details
 // MUI Material
-import { Box, Typography } from '@mui/material'
 import Container from '@mui/material/Container'
-import CircularProgress from '@mui/material/CircularProgress'
 
 //Component
 import AppBar from '~/components/AppBar/AppBar'
@@ -31,6 +29,7 @@ import { cloneDeep } from 'lodash'
 
 // React Router Dom
 import { useParams } from 'react-router-dom'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 
 function Board() {
   const dispatch = useDispatch()
@@ -120,18 +119,7 @@ function Board() {
   }
 
   if (!board) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        width: '100vw',
-        height: '100vh'
-      }}>
-        <CircularProgress />
-        <Typography>Loading Board...</Typography>
-      </Box>)
+    return <PageLoadingSpinner caption="Loading Board..." />
   }
 
   return (
