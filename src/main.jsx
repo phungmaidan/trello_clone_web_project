@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import App from '~/App.jsx'
 import CssBaseline from '@mui/material/CssBaseline'
+import GlobalStyles from '@mui/material/GlobalStyles'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
 import theme from '~/theme'
 // Cấu hình react-toastify thông báo đẩy
@@ -39,6 +40,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             //confirmationKeyword: 'CONFIRM',
             buttonOrder: ['confirm', 'cancel']
           }}>
+            <GlobalStyles styles={{ a: { textDecoration: 'none' } }} />
             <CssBaseline />
             <App />
             <ToastContainer position="bottom-left" theme="colored" />
