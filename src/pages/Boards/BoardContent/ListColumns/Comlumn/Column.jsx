@@ -87,7 +87,7 @@ function Column({ column }) {
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
       title: 'Delete Column',
-      description: 'This action will permanently delete your Column and its Cards! Please type "CONFIRM" to continue',
+      description: 'This action will permanently delete your Column and its Cards!',
 
       confirmationText: 'Confirm',
       cancellationText: 'Cancel'
