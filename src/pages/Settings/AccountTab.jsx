@@ -13,8 +13,8 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 
 import { FIELD_REQUIRED_MESSAGE, singleFileValidator } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
@@ -33,6 +33,7 @@ const VisuallyHiddenInput = styled('input')({
 })
 
 function AccountTab() {
+  const dispatch = useDispatch()
   const currentUser = useSelector(selectCurrentUser)
 
   // Những thông tin của user để init vào form (key tương ứng với register phía dưới Field)
@@ -46,12 +47,20 @@ function AccountTab() {
 
   const submitChangeGeneralInformation = (data) => {
     const { displayName } = data
-    console.log('displayName: ', displayName)
 
     // Nếu không có sự thay đổi gì về displayname thì không làm gì cả
     if (displayName === currentUser?.displayName) return
 
     // Gọi API...
+    toast.promise(
+      dispatch(updateUserAPI({ displayName })),
+      { pending: 'Updating...' }
+    ).then(res => {
+      // Đoạn này phải kiểm tra không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
+      if (!res.error) {
+        toast.success('User updated successfully!')
+      }
+    })
   }
 
   const uploadAvatar = (e) => {
@@ -67,12 +76,23 @@ function AccountTab() {
     let reqData = new FormData()
     reqData.append('avatar', e.target?.files[0])
     // Cách để log được dữ liệu thông qua FormData
-    console.log('reqData: ', reqData)
-    for (const value of reqData.values()) {
-      console.log('reqData Value: ', value)
-    }
+    // console.log('reqData: ', reqData)
+    // for (const value of reqData.values()) {
+    //   console.log('reqData Value: ', value)
+    // }
 
     // Gọi API...
+    toast.promise(
+      dispatch(updateUserAPI(reqData)),
+      { pending: 'Updating...' }
+    ).then(res => {
+      // Đoạn này phải kiểm tra không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
+      if (!res.error) {
+        toast.success('User updated successfully!')
+      }
+      // Lưu ý, dù có lỗi hoặc thành công thì cũng phải clear giá trị của file input, nếu không thì sẽ không thể chọn cùng một file liên tiếp được
+      e.target.value = ''
+    })
   }
 
   return (
